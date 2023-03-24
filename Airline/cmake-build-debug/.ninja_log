@@ -1,0 +1,20 @@
+# ninja log v5
+2	218	6888131920800959	build.ninja	cde8296236248132
+4	3001	6897754495737302	CMakeFiles/Airline.dir/RouteMap.cpp.obj	f786a3e45da141ff
+9	1242	6891854616988759	CMakeFiles/Airline.dir/Date.cpp.obj	2fee5cb2ad430823
+4	1581	6897751733543719	CMakeFiles/Airline.dir/main.cpp.obj	b1a130154008e389
+3	831	6889232128133519	CMakeFiles/Airline.dir/Airline.cpp.obj	4486cc1f402cf79f
+3001	4068	6897754506526831	Airline.exe	d7b112c7e9fb150b
+7	1590	6897790220753408	CMakeFiles/Airline.dir/Airline.cpp.obj	4486cc1f402cf79f
+1591	4102	6897790245686571	Airline.exe	d7b112c7e9fb150b
+9	8476	6897791405178449	CMakeFiles/Airline.dir/RouteMap.cpp.obj	f786a3e45da141ff
+8481	10960	6897791429996741	Airline.exe	d7b112c7e9fb150b
+11	9236	6897797145837109	CMakeFiles/Airline.dir/RouteMap.cpp.obj	f786a3e45da141ff
+9238	12185	6897797175218392	Airline.exe	d7b112c7e9fb150b
+11	7319	6897798689491243	CMakeFiles/Airline.dir/RouteMap.cpp.obj	f786a3e45da141ff
+7321	9876	6897798714908597	Airline.exe	d7b112c7e9fb150b
+9	1250	6897800105843430	CMakeFiles/Airline.dir/Airline.cpp.obj	4486cc1f402cf79f
+41	8090	6897800174164540	CMakeFiles/Airline.dir/RouteMap.cpp.obj	f786a3e45da141ff
+8090	10605	6897800198962650	Airline.exe	d7b112c7e9fb150b
+7	3270	6897800872410586	CMakeFiles/Airline.dir/main.cpp.obj	b1a130154008e389
+3272	5870	6897800898225522	Airline.exe	d7b112c7e9fb150b
