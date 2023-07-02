@@ -1,0 +1,3 @@
+C:/Users/HBW/Desktop/K-VCC/cmake-build-debug/CMakeFiles/K_VCC.dir
+C:/Users/HBW/Desktop/K-VCC/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/HBW/Desktop/K-VCC/cmake-build-debug/CMakeFiles/rebuild_cache.dir

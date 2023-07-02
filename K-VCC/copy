@@ -1,0 +1,213 @@
+#include <iostream>
+#include <cstring>
+#include <utility>
+#include <vector>
+#include <fstream>
+#include <unordered_set>
+#include <unordered_map>
+#include <queue>
+
+using namespace std;
+
+typedef pair<int, int> PII;
+
+const int N = 6010, M = 200010, K = 1000010, L = 100;
+
+unordered_set<int> S;
+priority_queue<PII, vector<PII>, greater<>> degree;
+unordered_map<int, int> mapping;
+vector<int> edges[K];
+vector<unordered_set<int>> branch;
+int n, m, k = 20;
+int h[N], e[M], ne[M], colors[N], idx;
+int d[K];
+
+void add(int a, int b) { // 加边函数
+    e[idx] = b, ne[idx] = h[a], h[a] = idx ++ ;
+}
+
+void dfs(int u, int fa, int c) {
+    colors[u] = c;
+    for (int i = h[u]; ~i; i = ne[i]) {
+        int j = e[i];
+        if (j != fa && !colors[j])
+            dfs(j, u, c);
+    }
+}
+
+struct Graph {
+    static const int N = 7000, M = 300000, INF = 1e9;
+    int *h, *e, *ne, *f, *bk, idx = 0;
+    int *d, *q, *cur;
+    int n = 0, S, T;
+    unordered_set<int> ver, cutSet;
+    Graph(unordered_set<int> _ver, const vector<PII>& edge) {
+        ver = _ver;
+        for (auto i : ver)
+            n = max(n, i);
+        h = new int[N];
+        e = new int[M], ne = new int[M], f = new int[M], bk = new int[M];
+        d = new int[N], q = new int[N], cur = new int[N];
+        memset(h, -1, N * sizeof (int));
+        for (auto i : ver)
+            add(i, n + i, 1);
+        for (auto p : edge)
+            add (p.first + n, p.second, INF);
+    }
+
+    void min_cut() {
+        S = *ver.begin() + n;
+        int mv, res = INF;
+        for (auto t : ver) {
+            if (t + n == S) continue;
+            T = t;
+            int minCut = dinic();
+            if (minCut < res) {
+                res = minCut;
+                mv = T;
+            }
+        }
+        cout << res << endl;
+        T = mv;
+        dinic();
+        bfs();
+
+        for (int i = 1; i <= n; i ++ ) {
+            if (d[i] != -1 && d[i + n] == -1) // 若入点可以被到达且出点不可到达，则该点为割点
+                cutSet.insert(i);
+        }
+    }
+
+    void add(int a, int b, int c) { // 加边函数
+        e[idx] = b, ne[idx] = h[a], bk[idx] = c, h[a] = idx ++ ;
+        e[idx] = a, ne[idx] = h[b], bk[idx] = 0, h[b] = idx ++ ;
+    }
+
+    bool bfs() { // 遍历全图，求残留网络
+        memset(d, -1, N * sizeof (int));
+        int hh = 0, tt = 0;
+        q[0] = S, d[S] = 0, cur[S] = h[S];
+
+        while (hh <= tt) {
+            int t = q[hh ++ ];
+            for (int i = h[t]; ~i; i = ne[i]) {
+                int j = e[i];
+                if (d[j] == -1 && f[i]) {
+                    d[j] = d[t] + 1;
+                    cur[j] = h[j];
+                    if (j == T) return true;
+                    q[ ++ tt] = j;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    int dfs(int u, int limit) { // 增广路径
+        if (u == T)
+            return limit;
+
+        int flow = 0;
+        for (int i = cur[u]; ~i && flow < limit; i = ne[i]) {
+            int j = e[i];
+            cur[u] = i;
+            if (d[j] == d[u] + 1 && f[i]) {
+                int t = dfs(j, min(f[i], limit - flow));
+                if (!t) d[j] = -1;
+                f[i] -= t, f[i ^ 1] += t, flow += t;
+            }
+        }
+
+        return flow;
+    }
+
+    int dinic() {
+        int r = 0, flow;
+        memcpy(f, bk, M * sizeof (int));
+        while (bfs())  // 当还存在残留网络
+            while(flow = dfs(S, INF)) // 当残留网络中还存在增广路径
+                r += flow;
+        return r;
+    }
+
+    ~Graph() {
+        delete h;
+        delete e;
+        delete ne;
+        delete f;
+        delete d;
+        delete cur;
+        delete q;
+    }
+};
+
+int main() {
+    fstream fin;
+    fin.open("../data/dblp.txt", ios::in);
+    fin >> n >> m;
+    memset(h, -1, sizeof h);
+
+    while (m -- ) {
+        int a, b;
+        fin >> a >> b;
+        edges[a].emplace_back(b);
+        edges[b].emplace_back(a);
+        d[a] ++ , d[b] ++ ;
+        n = max(b, n);
+    }
+
+    for (int i = n; i; i -- ) S.insert(i);
+
+    for (int i = 1; i <= n; i ++ )
+        degree.emplace(d[i], i);
+
+    do {
+        int node = degree.top().second;
+        degree.pop();
+        if (!S.count(node)) continue;
+        for (auto i : edges[node])
+            if (S.count(i)) {
+                degree.emplace(--d[i], i);
+                edges[i].erase(std::remove(edges[i].begin(), edges[i].end(), node), edges[i].end());
+            }
+        S.erase(node);
+    } while (degree.top().first < k);
+
+    int cnt = 0;
+    for (auto i : S)
+        mapping[i] = ++ cnt;
+
+    for (int i = 1; i <= n; i ++ )
+        if (S.count(i)) {
+            int a = mapping[i];
+            for (int j = 0; j < edges[i].size(); j ++ ) {
+                int b = edges[i][j] = mapping[edges[i][j]];
+                add(a, b);
+            }
+            edges[a] = edges[i];
+        }
+
+    cnt = 1, n = S.size();
+    for (int i = 1; i <= n; i ++ )
+        if (!colors[i])
+            dfs(i, -1, cnt ++ );
+
+    for (int i = 0; i < L; i ++ )
+        branch.emplace_back();
+
+    for (int i = 1; i <= n; i ++ )
+        branch[colors[i]].insert(i);
+
+    for (const auto& v : branch) {
+        if (!v.size()) continue;
+        vector<PII> edge;
+        for (auto i : v) {
+            for (auto b : edges[i])
+                edge.emplace_back(i, b);
+        }
+        Graph g(v, edge);
+        g.min_cut();
+    }
+    return 0;
+}
